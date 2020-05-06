@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>ユーザ 一覧</h3>
+<ul>
+    {% for user, rt in group %}
+    <li>{{ user }} さん : {{ rt }} %</li>
+    {% endfor %}
+</ul>
+{% endblock %}

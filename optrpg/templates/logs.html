@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>ログ一覧</h3>
+<ul>
+    {% for bingo in bingos %}
+    <li>[{{ bingo.created_at }}]
+        {{ bingo.user }} さん
+        <a href="/quest//{{ bingo.prob }}">{{ bingo.prob }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

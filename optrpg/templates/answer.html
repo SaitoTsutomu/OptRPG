@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+{% set answer=prdt['answer'].rstrip() %}
+<h3>模範解答</h3>
+<textarea class="src tall" rows="{{ answer.count('\n') + 1 }}" cols="90" readonly>{{ answer }}</textarea>
+{% endblock %}

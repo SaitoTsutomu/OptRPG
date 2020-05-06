@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block body %}
+{% set formula=prdt['formula'] %}
+{% set header=prdt['header'].rstrip() %}
+{% set footer=prdt['footer'].rstrip() %}
+<h3>{{ title }}</h3>
+<pre>{{ message | safe }}</pre>
+<ul>
+  {% for question in prdt['questions'] %}
+  <li>{{ question }}</li>
+  {% endfor %}
+  <li><a href="/table/{{ prob }}.csv" target="_blank">入力ファイル</a></li>
+  <li><a href="/table/{{ prob }}_out.csv" target="_blank">出力ファイル</a></li>
+</ul>
+<table class="formula" border="1">
+  <tr>
+    <td>{{ formula[0] }}</td>
+    <td>\( {{ formula[1] }} \)</td>
+  </tr>
+  <tr>
+    <td>制約条件</td>
+    <td>
+      {% for v in formula[2:] %}
+      \( {{ v }} ~~~~\)<br>
+      {% endfor %}
+  </tr>
+</table>
+<form action="/quest/{{ prob }}" method="POST">
+  <p>
+    投稿者<span style="color:red">*</span>:
+    <input type="text" name="user" size="30" value="{{ user }}" placeholder="名前" required>
+  </p>
+  <p>
+    プログラム(「???」を適切に直せ。)
+    <br>
+    <br>
+    <textarea class="fixsrc tall" name="header" rows="{{ header.count('\n') + 1 }}" cols="90"
+      readonly>{{ header }}</textarea><br>
+    <textarea class="src tall" name="src" rows="{{ src.count('\n') + 1 }}" cols="90">{{ src }}</textarea><br>
+    <textarea class="fixsrc tall" name="footer" rows="{{ footer.count('\n') + 1 }}" cols="90"
+      readonly>{{ footer }}</textarea>
+    <br>
+    <input type="submit" value="実行する">
+    <input type="reset" value="リセット">
+  </p>
+</form>
+{% endblock %}

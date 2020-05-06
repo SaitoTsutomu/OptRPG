@@ -1,0 +1,120 @@
+[probs.knapsack]
+title = "Theナップサック"
+questions = [
+    "ボス ：「ここに1000個の宝石がある。この袋に詰められるだけ詰めよ。ただし、袋には、1000gまでしか入らない」",
+    "ボス ：「最も価値が高くないと先には進めないぞ」",
+]
+formula = [
+    "最大化", "Worth^T Var",
+    "Weight^T Var \\le 1000",
+    "Var \\in \\{0, 1\\}^n"
+]
+header = """\
+from ortoolpy import pd, model_max, addbinvars, lpDot, addvals, value
+weightLimit = 1000  # 重さの制限
+df = pd.read_csv('csv/knapsack.csv')  # 入力ファイル
+addbinvars(df)  # dfに変数（Var列）追加
+"""
+src = """\
+m = model_max()  # 数理モデル
+m += lpDot(???, df.Var)  # 目的関数
+m += lpDot(???, df.Var) <= ???  # 制約条件
+"""
+answer = """\
+m = model_max()
+m += lpDot(df.Worth, df.Var)
+m += lpDot(df.Weight, df.Var) <= weightLimit
+"""
+footer = """\
+m.solve()  # ソルバー(CBC)で実行
+addvals(df)  # dfに結果（Val列）追加
+print(value(m.objective))
+"""
+result = "346660.0"
+
+[probs.shortest_path]
+title = "The最短路"
+questions = [
+    "ボス ：「ここに100個の旗があり、いくつかの旗の間に糸が張ってある。0番の旗から1番の旗への糸を辿れ」",
+    "ボス ：「糸はFromからToへ辿れる。最も短い経路を求めよ」",
+]
+formula = [
+    "最小化", "Dist^T Var",
+    "FromがiのVarの和 - ToがiのVarの和 == 1 ~~~~ i = 0",
+    "FromがiのVarの和 - ToがiのVarの和 == -1 ~~~~ i = 1",
+    "FromがiのVarの和 - ToがiのVarの和 == 0  ~~~~ \forall i \\neq 0, 1"
+]
+header = """\
+from ortoolpy import pd, model_min, addvars, lpDot, lpSum, addvals, value
+nn = 30
+df = pd.read_csv('/Users/tsutomu/GitHub/OptRPG/optrpg/csv/shortest_path.csv')
+addvars(df, upBound=1)
+"""
+src = """\
+m = ???
+m += ???
+for i in range(nn):
+    nd = 1 if i == 0 else -1 if i == 1 else 0
+    m += lpSum(df[df.From == i].Var) - ??? == nd
+"""
+answer = """\
+m = model_min()
+m += lpDot(df.Dist, df.Var)
+for i in range(nn):
+    nd = 1 if i == 0 else -1 if i == 1 else 0
+    m += lpSum(df[df.From == i].Var) - lpSum(df[df.To == i].Var) == nd
+"""
+footer = """\
+m.solve()
+addvals(df)
+print(value(m.objective))
+"""
+result = "3934.0"
+
+[probs.set_cover]
+title = ""
+questions = [
+]
+formula = [
+]
+header = """\
+"""
+src = """\
+"""
+answer = """\
+"""
+footer = """\
+"""
+result = ""
+
+[probs.matching]
+title = ""
+questions = [
+]
+formula = [
+]
+header = """\
+"""
+src = """\
+"""
+answer = """\
+"""
+footer = """\
+"""
+result = ""
+
+[probs.min_flow]
+title = ""
+questions = [
+]
+formula = [
+]
+header = """\
+"""
+src = """\
+"""
+answer = """\
+"""
+footer = """\
+"""
+result = ""

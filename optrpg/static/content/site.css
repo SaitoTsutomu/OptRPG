@@ -1,0 +1,40 @@
+.src {
+    background: #fffdef;
+    margin-top: 0px;
+    margin-bottom: -2px;
+    font-family: monospace, serif;
+    font-size: +1em;
+}
+.fixsrc {
+    background: #d0d0d0;
+    margin-top: 0px;
+    margin-bottom: -2px;
+    font-family: monospace, serif;
+    font-size: +1em;
+}
+.formula {
+    background: #efffd0;
+}
+.result {
+    background: #e4ddff;
+}
+.sticky_table thead th {
+    /* 縦スクロール時に固定する */
+    background-color: #f0ffe0;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    /* tbody内のセルより手前に表示する */
+    z-index: 1;
+}
+.sticky_table th:first-child {
+    /* 横スクロール時に固定する */
+    background-color: #e0fff0;
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+}
+.sticky_table thead th:first-child {
+    /* ヘッダー行内の他のセルより手前に表示する */
+    z-index: 2;
+}

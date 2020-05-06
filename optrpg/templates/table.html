@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>ファイル {{ file }} (<a href="/csv/{{ file }}">ダウンロード</a>)</h3>
+<table border="1" class="sticky_table">
+  <thead>
+    <tr>
+      <th></th>
+      {% for c in df %}
+      <th>{{ c }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in df.itertuples() %}
+    <tr>
+      <th>{{ row.Index }}</th>
+      {% for co in df %}
+      <td>{{ getattr(row, co) }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
