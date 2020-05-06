@@ -30,7 +30,7 @@ class Bingo(db.Model):
     created_at = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f"<id={self.user} title={self.prob}>"
+        return f"<user={self.user} prob={self.prob}>"
 
 
 def init():
@@ -46,7 +46,7 @@ def main():
 
 @app.route("/")
 def index():
-    return render_template("index.html", version=version)
+    return render_template("index.html", version=version, user=session.get("user", ""))
 
 
 def get_bingo(user, prob):
@@ -68,6 +68,22 @@ def execpy(src):
 
 def sani(s):
     return re.sub(r"(import|eval|exec)", " ", s)
+
+
+@app.route("/start", methods=["POST"])
+def start():
+    if request.method != "POST":
+        return redirect(url_for("/"))
+    user = session["user"] = request.form["user"]
+    pages = list(data["probs"].keys())
+    bngs = db.session.query(Bingo).filter(Bingo.user == user).all()
+    try:
+        i = max([pages.index(bng.prob) for bng in bngs], default=0)
+    except ValueError:
+        i = 0
+    if i + 1 >= len(pages):
+        return redirect(url_for("finish"))
+    return redirect(url_for("quest", prob=pages[i + 1]))
 
 
 @app.route("/quest/<prob>", methods=["GET", "POST"])

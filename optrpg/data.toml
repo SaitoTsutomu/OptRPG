@@ -3,11 +3,12 @@ title = "Theナップサック"
 questions = [
     "ボス ：「ここに1000個の宝石がある。この袋に詰められるだけ詰めよ。ただし、袋には、1000gまでしか入らない」",
     "ボス ：「最も価値が高くないと先には進めないぞ」",
+    "ボス ：「なお、定式化のWorthやVarは、表dfの列だ」",
 ]
 formula = [
-    "最大化", "Worth^T Var",
-    "Weight^T Var \\le 1000",
-    "Var \\in \\{0, 1\\}^n"
+    "最大化", "\\mbox{Worth}^T ~ \\mbox{Var}",
+    "\\mbox{Weight}^T ~ \\mbox{Var} \\le 1000",
+    "\\mbox{Var} \\in \\{0, 1\\}^n"
 ]
 header = """\
 from ortoolpy import pd, model_max, addbinvars, lpDot, addvals, value
@@ -39,15 +40,15 @@ questions = [
     "ボス ：「糸はFromからToへ辿れる。最も短い経路を求めよ」",
 ]
 formula = [
-    "最小化", "Dist^T Var",
-    "FromがiのVarの和 - ToがiのVarの和 == 1 ~~~~ i = 0",
-    "FromがiのVarの和 - ToがiのVarの和 == -1 ~~~~ i = 1",
-    "FromがiのVarの和 - ToがiのVarの和 == 0  ~~~~ \forall i \\neq 0, 1"
+    "最小化", "\\mbox{Dist}^T ~ \\mbox{Var}",
+    "\\sum_{\\mbox{From}=i}{\\mbox{Var}} - \\sum_{\\mbox{To}=i}{\\mbox{Var}} = 1, ~~~~ i = 0",
+    "\\sum_{\\mbox{From}=i}{\\mbox{Var}} - \\sum_{\\mbox{To}=i}{\\mbox{Var}} = -1, ~~~~ i = 1",
+    "\\sum_{\\mbox{From}=i}{\\mbox{Var}} - \\sum_{\\mbox{To}=i}{\\mbox{Var}} = 0,  ~~~~ \\forall i \\neq 0, 1"
 ]
 header = """\
 from ortoolpy import pd, model_min, addvars, lpDot, lpSum, addvals, value
 nn = 30
-df = pd.read_csv('/Users/tsutomu/GitHub/OptRPG/optrpg/csv/shortest_path.csv')
+df = pd.read_csv('csv/shortest_path.csv')
 addvars(df, upBound=1)
 """
 src = """\
@@ -72,37 +73,83 @@ print(value(m.objective))
 result = "3934.0"
 
 [probs.set_cover]
-title = ""
+title = "The集合被覆"
 questions = [
+    "ボス ：「ここに50個の幻の花と100匹の蝶がいる。各々の蝶は、特定の幻の花を好んでいる」",
+    "ボス ：「いくつかの幻の花を選び、全ての蝶が魅かれるようにせよ」",
+    "ボス ：「dfの行は幻の花に、列は蝶に対応する。Like_iは列iで『好むとき1』だ。」",
 ]
 formula = [
+    "最小化", "\\sum{\\mbox{Var}}",
+    "\\mbox{Like}_i^T ~ \\mbox{Var} \\ge 1, ~~~~ \\forall i \\in \\mbox{Flower}",
+    "\\mbox{Var} \\in \\{0, 1\\}^n"
 ]
 header = """\
+from ortoolpy import pd, addbinvars, model_min, lpSum, lpDot, addvals, value
+df = pd.read_csv('csv/set_cover.csv')
+addbinvars(df)
 """
 src = """\
+m = ???
+m += ???
+for col in df.columns[:-1]:
+    m += lpDot(df.loc[:, col], ???) >= 1
 """
 answer = """\
+m = model_min()
+m += lpSum(df.Var)
+for col in df.columns[:-1]:
+    m += lpDot(df.loc[:, col], df.Var) >= 1
 """
 footer = """\
+m.solve()
+addvals(df)
+print(value(m.objective))
 """
-result = ""
+result = "12.0"
 
 [probs.matching]
-title = ""
+title = "Theマッチング"
 questions = [
+    "ボス ：「ここに100個の幻の花と50匹の蝶がいる。各々の蝶は、幻の花ごとの好みを持っている」",
+    "ボス ：「全ての蝶を何れかの花にとまらせよ。また1つの花に最大で1つの蝶しかとまれない」",
+    "ボス ：「止まった好みの総和を最大化せよ」",
 ]
 formula = [
+    "最大化", "\\mbox{Like}^T ~ \\mbox{Var}",
+    "\\mbox{Like}_{\\mbox{Butterfly}=j}^T ~ \\mbox{Var}_{\\mbox{Butterfly}=j} = 1 ~~~~ \\forall j \\in \\mbox{Butterfly}",
+    "\\mbox{Like}_{\\mbox{Flower}=i}^T ~ \\mbox{Var}_{\\mbox{Flower}=i} \\le 1 ~~~~ \\forall i \\in \\mbox{Flower}",
+    "\\mbox{Var} \\in \\{0, 1\\}^{|\\mbox{Flower}| \\cdot |\\mbox{Butterfly}|}"
 ]
 header = """\
+from ortoolpy import pd, model_max, addbinvars, lpDot, lpSum, addvals, value
+df = pd.read_csv('csv/matching.csv')
+addbinvars(df)
 """
 src = """\
+m = ???
+m += ???
+for _, gr in ???:
+    m += ??? == 1
+for _, gr in ???:
+    m += ??? <= 1
 """
 answer = """\
+m = model_max()
+m += lpDot(df.Like, df.Var)
+for _, gr in df.groupby('Butterfly'):
+    m += lpSum(gr.Var) == 1
+for _, gr in df.groupby('Flower'):
+    m += lpSum(gr.Var) <= 1
 """
 footer = """\
+m.solve()
+addvals(df)
+print(value(m.objective))
 """
-result = ""
+result = "49454.0"
 
+ここから！
 [probs.min_flow]
 title = ""
 questions = [

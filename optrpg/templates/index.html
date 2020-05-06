@@ -7,7 +7,13 @@
 <ul>
     <li>Python の数理最適化ライブラリ ortoolpy を使って、全5問の <strong>組合せ最適化問題</strong> を解いてください。</li>
 </ul>
-<strong><a href="/quest/knapsack">始める</a></strong>
+<form action="/start" method="POST">
+    <p>
+        投稿者<span style="color:red">*</span>:
+        <input type="text" name="user" size="30" value="{{ user }}" placeholder="名前" required>
+        <input type="submit" value="始める">
+    </p>
+</form>
 <h4>参考リンク</h4>
 <ul>
     <li><a href="https://qiita.com/SaitoTsutomu/items/98167dc25c7f133899f7" target="_blank">初歩からの数理モデル - Qiita</a></li>
