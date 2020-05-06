@@ -1,1 +1,1 @@
-from .views import init, main  # noqa
+from .views import app, init, main  # noqa
