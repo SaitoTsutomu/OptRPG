@@ -35,7 +35,7 @@ class Bingo(db.Model):
 
 def init():
     """
-    poetry run python -c "from optrpg.models import init; init()"
+    poetry run python -c "from optrpg import init; init()"
     """
     db.create_all()
 

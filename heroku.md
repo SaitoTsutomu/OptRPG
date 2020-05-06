@@ -13,7 +13,7 @@ heroku create --buildpack heroku/python
 heroku addons:create heroku-postgresql:hobby-dev
 git push heroku master
 heroku logs
-heroku run python -c "from opt_quest.models import init; init()"
+heroku run python -c "from optrpg import init; init()"
 heroku open
 ```
 
