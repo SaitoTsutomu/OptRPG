@@ -70,20 +70,23 @@ def sani(s):
     return re.sub(r"(import|eval|exec)", " ", s)
 
 
-@app.route("/start", methods=["POST"])
+@app.route("/start", methods=["GET", "POST"])
 def start():
-    if request.method != "POST":
-        return redirect(url_for("/"))
-    user = session["user"] = request.form["user"]
+    if request.method == "POST":
+        session["user"] = request.form.get("user", "")
+    user = session["user"]
+    if not user:
+        return redirect(url_for("index"))
     pages = list(data["probs"].keys())
     bngs = db.session.query(Bingo).filter(Bingo.user == user).all()
     try:
-        i = max([pages.index(bng.prob) for bng in bngs], default=0)
+        done = {pages.index(bng.prob) for bng in bngs}
+        i = min(set(range(len(pages))) - done, default=-1)
     except ValueError:
         i = 0
-    if i + 1 >= len(pages):
+    if i < 0:
         return redirect(url_for("finish"))
-    return redirect(url_for("quest", prob=pages[i + 1]))
+    return redirect(url_for("quest", prob=pages[i]))
 
 
 @app.route("/quest/<prob>", methods=["GET", "POST"])
@@ -103,18 +106,23 @@ def quest(prob):
             created_at = datetime.now().replace(microsecond=0)
             db.session.add(Bingo(user=user, prob=prob, created_at=created_at))
             db.session.commit()
-            nxt = "/finish" if page == len(pages) - 1 else f"/quest/{pages[page + 1]}"
-            message = f'正解です! &nbsp; <a href="{nxt}">次へ進む</a><hr>'
+            message = f'正解です! &nbsp; <a href="/start">次へ進む</a><hr>'
         else:
             message = (
                 f'結果<br><pre class="result">{s}</pre><br>判定：違います'
                 f'<p><a href="/answer/{prob}" target="_blank">解答を見る</a></p>'
             )
+    files = (
+        [[f"{prob}.csv", "入力ファイル（df）"]]
+        + prdt.get("extra_in_file", [])
+        + [[f"{prob}_out.csv", "出力ファイル（df[df.Val > 0]）"]]
+    )
     return render_template(
         "problem.html",
         version=version,
         title=f"{page + 1}階ボス - " + prdt["title"],
         message=message,
+        files=files,
         prob=prob,
         prdt=prdt,
         user=session.get("user", ""),

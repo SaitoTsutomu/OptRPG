@@ -9,8 +9,9 @@
   {% for question in prdt['questions'] %}
   <li>{{ question }}</li>
   {% endfor %}
-  <li><a href="/table/{{ prob }}.csv" target="_blank">入力ファイル（df）</a></li>
-  <li><a href="/table/{{ prob }}_out.csv" target="_blank">出力ファイル（df[df.Val > 0]）</a></li>
+  {% for name, val in files %}
+  <li><a href="/table/{{ name }}" target="_blank">{{ val }}</a></li>
+  {% endfor %}
 </ul>
 <table class="formula" border="1">
   <tr>

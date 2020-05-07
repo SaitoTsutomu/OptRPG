@@ -77,7 +77,7 @@ title = "The集合被覆"
 questions = [
     "ボス ：「ここに50個の幻の花と100匹の蝶がいる。各々の蝶は、特定の幻の花を好んでいる」",
     "ボス ：「いくつかの幻の花を選び、全ての蝶が魅かれるようにせよ」",
-    "ボス ：「dfの行は幻の花に、列は蝶に対応する。Like_iは列iで『好むとき1』だ。」",
+    "ボス ：「dfの行は幻の花に、列は蝶に対応する。Like_iは列iで『好むとき1』だ」",
 ]
 formula = [
     "最小化", "\\sum{\\mbox{Var}}",
@@ -149,19 +149,44 @@ print(value(m.objective))
 """
 result = "49454.0"
 
-ここから！
 [probs.min_flow]
-title = ""
+title = "The最小費用流"
+extra_in_file = [["min_flow_node.csv", "入力ファイル（dfnd）"]]
 questions = [
+    "ボス ：「ここに100個の旗があり、いくつかの旗の間に向きのある糸が張ってある」",
+    "ボス ：「いくつかの旗の上には虫が何匹かおり、いくつかの旗の上には葉っぱがある」",
+    "ボス ：「糸に沿って、すべての虫を葉っぱに移動させよ」",
+    "ボス ：「全虫の移動距離の総和を最小化せよ」",
+    "ボス ：「dfnd.Bugは、旗の上の虫の数、dfnd.Leafは、旗の上の葉っぱの枚数だ」",
+    "ボス ：「1枚の葉っぱには、虫は1匹までしか乗れない」",
 ]
 formula = [
+    "最小化", "\\mbox{Dist}^T ~ \\mbox{Var}",
+    "\\sum_{\\mbox{From}=i}{\\mbox{Var}} - \\sum_{\\mbox{To}=i}{\\mbox{Var}} = \\mbox{Bug}_i - \\mbox{Leaf}_i,  ~~~~ \\forall i"
 ]
 header = """\
+from ortoolpy import pd, model_min, addvars, addvals, lpDot, lpSum, value
+dfnd = pd.read_csv('csv/min_flow_node.csv')
+df = pd.read_csv('csv/min_flow.csv')
+addvars(df)
 """
 src = """\
+m = ???
+m += ???
+for row in dfnd.itertuples():
+    m += (lpSum(df[???].Var) -
+          lpSum(df[???].Var) == row.Bug - row.Leaf)
 """
 answer = """\
+m = model_min()
+m += lpDot(df.Dist, df.Var)
+for row in dfnd.itertuples():
+    m += (lpSum(df[df.From == row.Index].Var) -
+          lpSum(df[df.To == row.Index].Var) == row.Bug - row.Leaf)
 """
 footer = """\
+m.solve()
+addvals(df)
+print(value(m.objective))
 """
-result = ""
+result = "60746.0"
