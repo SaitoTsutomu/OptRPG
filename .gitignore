@@ -7,6 +7,7 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 *.lnk
+.envrc
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
