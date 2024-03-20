@@ -26,13 +26,6 @@ psycopg2-binary = "^2.9"
 python = "^3.11"
 toml = "^0.10"
 
-[tool.poetry.group.dev.dependencies]
-black = "^23.12"
-flake8 = "^6.1"
-isort = "^5.13"
-mypy = "^1.8"
-pytest = "^7.4"
-
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
