@@ -21,10 +21,10 @@ optrpg = "optrpg:main"
 Flask-SQLAlchemy = "^3.1"
 flask = "^3.0"
 gunicorn = "^22.0"
-ortoolpy = "^0.6"
+ortoolpy = "^0"
 psycopg2-binary = "^2.9"
 python = "^3.11"
-toml = "^0.10"
+toml = "^0"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
